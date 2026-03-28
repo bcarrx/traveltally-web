@@ -1,4 +1,4 @@
-const API = 'http://localhost:8080/api';
+const API = 'https://traveltally-web-production.up.railway.app/api';
 
 // ── State ──
 let currentCurrency = { currName: 'JPY', symbol: '¥', ER: 0.0064 };

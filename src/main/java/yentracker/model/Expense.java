@@ -5,14 +5,16 @@ public class Expense {
     private double usd;
     private String category;
     private String description;
+    private String date; // ISO format: YYYY-MM-DD
 
     public Expense() {}
 
-    public Expense(double cost, double usd, String category, String description) {
+    public Expense(double cost, double usd, String category, String description, String date) {
         this.cost = cost;
         this.usd = usd;
         this.category = category;
         this.description = description;
+        this.date = date;
     }
 
     public double getCost() { return cost; }
@@ -26,4 +28,7 @@ public class Expense {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 }

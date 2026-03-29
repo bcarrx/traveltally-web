@@ -12,209 +12,257 @@
 
   <div class="grain"></div>
 
-  <header>
-    <div class="header-inner">
+  <!-- ═══ PIN SCREEN ═══ -->
+  <div id="pin-screen">
+    <div class="pin-card">
       <div class="logo">
-        <span class="logo-symbol">¥$€D</span>
+        <span class="logo-symbol">¥$€</span>
         <h1>Traveller's Tally</h1>
       </div>
-      <p class="tagline">Travel Expense Log</p>
+      <p class="pin-sub">Enter your PIN to access your expenses</p>
+      <div class="pin-input-row">
+        <input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off" />
+        <button id="pinSubmit" class="btn-primary">Enter</button>
+      </div>
+      <p class="pin-hint">New user? Enter any 4–8 digit PIN to create your account.</p>
+      <p class="pin-error" id="pinError"></p>
     </div>
-    <div class="header-rule"></div>
-  </header>
+  </div>
 
-  <!-- NAV TABS -->
-  <nav class="main-nav">
-    <button class="nav-tab active" data-view="log">Log</button>
-    <button class="nav-tab" data-view="days">Days</button>
-    <button class="nav-tab" data-view="charts">Breakdown</button>
-  </nav>
+  <!-- ═══ APP ═══ -->
+  <div id="app" style="display:none">
 
-  <main>
-
-    <!-- ═══ VIEW: LOG ═══ -->
-    <div class="view active" id="view-log">
-
-      <section class="panel currency-panel">
-        <div class="panel-label">01 — Currency</div>
-        <h2>Set Your Currency</h2>
-        <div class="presets">
-          <button class="preset-btn active" data-name="JPY" data-symbol="¥" data-rate="0.0064">¥ Yen</button>
-          <button class="preset-btn" data-name="EUR" data-symbol="€" data-rate="1.08">€ Euro</button>
-          <button class="preset-btn" data-name="GMD" data-symbol="D" data-rate="0.014">D Dalasi</button>
-          <button class="preset-btn" data-name="GBP" data-symbol="£" data-rate="1.27">£ Pound</button>
-          <button class="preset-btn" data-name="custom" data-symbol="" data-rate="">+ Custom</button>
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-symbol">¥$€</span>
+          <h1>Traveller's Tally</h1>
         </div>
-        <div class="custom-fields" id="customFields">
+        <div class="header-right">
+          <span class="trip-badge" id="tripBadge">No active trip</span>
+          <button class="btn-ghost small" id="switchPin">Switch PIN</button>
+        </div>
+      </div>
+      <div class="header-rule"></div>
+    </header>
+
+    <nav class="main-nav">
+      <button class="nav-tab active" data-view="log">Log</button>
+      <button class="nav-tab" data-view="trips">Trips</button>
+      <button class="nav-tab" data-view="days">Days</button>
+      <button class="nav-tab" data-view="charts">Breakdown</button>
+    </nav>
+
+    <main>
+
+      <!-- ═══ VIEW: LOG ═══ -->
+      <div class="view active" id="view-log">
+
+        <!-- No trip warning -->
+        <div class="no-trip-banner" id="noTripBanner">
+          <span>⚠ No active trip.</span>
+          <button class="btn-accent-small" id="goStartTrip">Start a trip →</button>
+        </div>
+
+        <section class="panel currency-panel" id="logPanel">
+          <div class="panel-label">01 — Currency</div>
+          <h2>Set Your Currency</h2>
+          <div class="presets">
+            <button class="preset-btn" data-name="JPY" data-symbol="¥" data-rate="0.0064">¥ Yen</button>
+            <button class="preset-btn" data-name="EUR" data-symbol="€" data-rate="1.08">€ Euro</button>
+            <button class="preset-btn" data-name="GMD" data-symbol="D" data-rate="0.014">D Dalasi</button>
+            <button class="preset-btn" data-name="GBP" data-symbol="£" data-rate="1.27">£ Pound</button>
+            <button class="preset-btn" data-name="custom" data-symbol="" data-rate="">+ Custom</button>
+          </div>
+          <div class="custom-fields" id="customFields">
+            <div class="field-row">
+              <div class="field"><label>Code</label><input id="custCode" placeholder="e.g. HKD" maxlength="5" /></div>
+              <div class="field"><label>Symbol</label><input id="custSymbol" placeholder="e.g. $" maxlength="2" /></div>
+              <div class="field"><label>Rate (1 unit → USD)</label><input id="custRate" type="number" step="0.0001" placeholder="e.g. 0.13" /></div>
+            </div>
+            <button class="btn-primary" id="setCustomBtn">Apply</button>
+          </div>
+          <div class="currency-status">
+            <span class="status-dot"></span>
+            <span id="statusText">—</span>
+          </div>
+        </section>
+
+        <section class="panel add-panel">
+          <div class="panel-label">02 — Log Expense</div>
+          <h2>Add a Purchase</h2>
+          <div class="field">
+            <label>Amount <span id="currLabel">in JPY (¥)</span></label>
+            <div class="amount-row">
+              <input id="costInput" type="number" step="0.01" placeholder="0" />
+              <div class="usd-preview" id="usdPreview">≈ $0.00</div>
+            </div>
+          </div>
           <div class="field-row">
             <div class="field">
-              <label>Code</label>
-              <input id="custCode" placeholder="e.g. HKD" maxlength="5" />
+              <label>Category</label>
+              <select id="categorySelect">
+                <option value="Food">🍜 Food</option>
+                <option value="Transit">🚆 Transit</option>
+                <option value="Merchandise">🛍 Merchandise</option>
+                <option value="Lodging">🏨 Lodging</option>
+                <option value="Entertainment">🎌 Entertainment</option>
+                <option value="Other">📦 Other</option>
+              </select>
             </div>
             <div class="field">
-              <label>Symbol</label>
-              <input id="custSymbol" placeholder="e.g. $" maxlength="2" />
-            </div>
-            <div class="field">
-              <label>Rate (1 unit → USD)</label>
-              <input id="custRate" type="number" step="0.0001" placeholder="e.g. 0.13" />
+              <label>Description</label>
+              <input id="descInput" placeholder="e.g. Ramen at Ichiran" />
             </div>
           </div>
-          <button class="btn-primary" id="setCustomBtn">Apply Custom</button>
-        </div>
-        <div class="currency-status">
-          <span class="status-dot"></span>
-          <span id="statusText">JPY — 1 ¥ = $0.0064</span>
-        </div>
-      </section>
+          <button class="btn-primary" id="addBtn">Record Expense →</button>
+          <div class="add-feedback" id="addFeedback"></div>
+        </section>
 
-      <section class="panel add-panel">
-        <div class="panel-label">02 — Log Expense</div>
-        <h2>Add a Purchase</h2>
-        <div class="field">
-          <label>Amount <span id="currLabel">in JPY (¥)</span></label>
-          <div class="amount-row">
-            <input id="costInput" type="number" step="0.01" placeholder="0" />
-            <div class="usd-preview" id="usdPreview">≈ $0.00</div>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Category</label>
-            <select id="categorySelect">
-              <option value="Food">🍜 Food</option>
-              <option value="Transit">🚆 Transit</option>
-              <option value="Merchandise">🛍 Merchandise</option>
-              <option value="Lodging">🏨 Lodging</option>
-              <option value="Entertainment">🎌 Entertainment</option>
-              <option value="Other">📦 Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Description</label>
-            <input id="descInput" placeholder="e.g. Ramen at Ichiran" />
-          </div>
-        </div>
-        <button class="btn-primary" id="addBtn">Record Expense →</button>
-        <div class="add-feedback" id="addFeedback"></div>
-      </section>
-
-      <!-- Today summary -->
-      <section class="summary-bar" id="summaryBar">
-        <div class="summary-item">
-          <span class="summary-num" id="sumTransactions">0</span>
-          <span class="summary-label">today</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-num" id="sumForeign">0</span>
-          <span class="summary-label" id="sumForeignLabel">JPY today</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-num" id="sumUsd">$0.00</span>
-          <span class="summary-label">USD today</span>
-        </div>
-      </section>
-
-      <!-- Today's ledger -->
-      <section class="panel ledger-panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-label">03 — Today's Ledger</div>
-            <h2 id="ledgerDate">Today</h2>
-          </div>
-          <div class="panel-actions">
-            <div class="filter-tabs" id="filterTabs">
-              <button class="filter-tab active" data-filter="All">All</button>
-              <button class="filter-tab" data-filter="Food">Food</button>
-              <button class="filter-tab" data-filter="Transit">Transit</button>
-              <button class="filter-tab" data-filter="Merchandise">Merch</button>
-              <button class="filter-tab" data-filter="Other">Other</button>
-            </div>
-            <button class="btn-ghost" id="clearBtn">Clear Today</button>
-          </div>
-        </div>
-        <div class="ledger" id="ledger">
-          <div class="empty-state">
-            <span class="empty-icon">✈</span>
-            <p>No expenses yet.<br>Start logging your journey.</p>
-          </div>
-        </div>
-      </section>
-
-    </div>
-
-    <!-- ═══ VIEW: DAYS ═══ -->
-    <div class="view" id="view-days">
-      <section class="panel">
-        <div class="panel-label">Trip History</div>
-        <h2>Days</h2>
-        <div id="daysList" class="days-list">
-          <div class="empty-state"><span class="empty-icon">📅</span><p>No days recorded yet.</p></div>
-        </div>
-      </section>
-
-      <!-- Expanded day detail -->
-      <section class="panel" id="dayDetail" style="display:none">
-        <div class="panel-header">
-          <div>
-            <div class="panel-label">Day Detail</div>
-            <h2 id="dayDetailDate">—</h2>
-          </div>
-          <button class="btn-ghost" id="backToDays">← Back</button>
-        </div>
-        <div class="ledger" id="dayDetailLedger"></div>
-      </section>
-    </div>
-
-    <!-- ═══ VIEW: CHARTS ═══ -->
-    <div class="view" id="view-charts">
-      <section class="panel">
-        <div class="panel-label">Spending Breakdown</div>
-        <h2>By Category</h2>
-
-        <div class="chart-scope">
-          <button class="scope-btn active" data-scope="today">Today</button>
-          <button class="scope-btn" data-scope="all">All Time</button>
-        </div>
-
-        <div id="categoryChart" class="category-chart">
-          <div class="empty-state"><span class="empty-icon">📊</span><p>No data yet.</p></div>
-        </div>
-
-        <div class="chart-totals" id="chartTotals"></div>
-      </section>
-
-      <!-- All-time summary -->
-      <section class="panel">
-        <div class="panel-label">All Time</div>
-        <h2>Trip Total</h2>
-        <div class="summary-bar" style="margin-top:0; border:none; padding: 0.5rem 0;">
+        <section class="summary-bar" id="summaryBar">
           <div class="summary-item">
-            <span class="summary-num" id="allTransactions">0</span>
-            <span class="summary-label">purchases</span>
+            <span class="summary-num" id="sumTransactions">0</span>
+            <span class="summary-label">today</span>
           </div>
           <div class="summary-divider"></div>
           <div class="summary-item">
-            <span class="summary-num" id="allUsd">$0.00</span>
-            <span class="summary-label">USD total</span>
+            <span class="summary-num" id="sumForeign">0</span>
+            <span class="summary-label" id="sumForeignLabel">spent today</span>
           </div>
           <div class="summary-divider"></div>
           <div class="summary-item">
-            <span class="summary-num" id="allDays">0</span>
-            <span class="summary-label">days</span>
+            <span class="summary-num" id="sumUsd">$0.00</span>
+            <span class="summary-label">USD today</span>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
 
-  </main>
+        <section class="panel ledger-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-label">03 — Today's Ledger</div>
+              <h2 id="ledgerDate">Today</h2>
+            </div>
+            <div class="panel-actions">
+              <div class="filter-tabs" id="filterTabs">
+                <button class="filter-tab active" data-filter="All">All</button>
+                <button class="filter-tab" data-filter="Food">Food</button>
+                <button class="filter-tab" data-filter="Transit">Transit</button>
+                <button class="filter-tab" data-filter="Merchandise">Merch</button>
+                <button class="filter-tab" data-filter="Other">Other</button>
+              </div>
+              <button class="btn-ghost" id="clearBtn">Clear Today</button>
+            </div>
+          </div>
+          <div class="ledger" id="ledger">
+            <div class="empty-state"><span class="empty-icon">✈</span><p>No expenses yet.<br>Start logging your journey.</p></div>
+          </div>
+        </section>
+      </div>
 
-  <footer>
-    <span>TravelTally</span>
-    <span id="footerDate"></span>
-  </footer>
+      <!-- ═══ VIEW: TRIPS ═══ -->
+      <div class="view" id="view-trips">
+
+        <!-- Active trip card -->
+        <section class="panel" id="activeTripCard">
+          <div class="panel-label">Active Trip</div>
+          <div id="activeTripContent">
+            <div class="empty-state"><span class="empty-icon">🗺</span><p>No active trip.<br>Start one below.</p></div>
+          </div>
+        </section>
+
+        <!-- Start new trip -->
+        <section class="panel">
+          <div class="panel-label">New Trip</div>
+          <h2>Start a Trip</h2>
+          <div class="field-row">
+            <div class="field">
+              <label>Trip Name</label>
+              <input id="tripName" placeholder="e.g. Japan Spring 2026" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Currency Code</label><input id="tripCurrName" placeholder="JPY" maxlength="5" /></div>
+            <div class="field"><label>Symbol</label><input id="tripSymbol" placeholder="¥" maxlength="2" /></div>
+            <div class="field"><label>Rate (1 unit → USD)</label><input id="tripRate" type="number" step="0.0001" placeholder="0.0064" /></div>
+          </div>
+          <button class="btn-primary" id="startTripBtn">Start Trip →</button>
+          <div class="add-feedback" id="tripFeedback"></div>
+        </section>
+
+        <!-- Past trips -->
+        <section class="panel">
+          <div class="panel-label">Past Trips</div>
+          <h2>History</h2>
+          <div id="pastTripsList" class="days-list">
+            <div class="empty-state"><span class="empty-icon">📦</span><p>No past trips yet.</p></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ═══ VIEW: DAYS ═══ -->
+      <div class="view" id="view-days">
+        <section class="panel">
+          <div class="panel-label">This Trip</div>
+          <h2>Days</h2>
+          <div id="daysList" class="days-list">
+            <div class="empty-state"><span class="empty-icon">📅</span><p>No days recorded yet.</p></div>
+          </div>
+        </section>
+        <section class="panel" id="dayDetail" style="display:none">
+          <div class="panel-header">
+            <div><div class="panel-label">Day Detail</div><h2 id="dayDetailDate">—</h2></div>
+            <button class="btn-ghost" id="backToDays">← Back</button>
+          </div>
+          <div class="ledger" id="dayDetailLedger"></div>
+        </section>
+      </div>
+
+      <!-- ═══ VIEW: CHARTS ═══ -->
+      <div class="view" id="view-charts">
+        <section class="panel">
+          <div class="panel-label">Spending Breakdown</div>
+          <h2>By Category</h2>
+          <div class="chart-scope">
+            <button class="scope-btn active" data-scope="today">Today</button>
+            <button class="scope-btn" data-scope="all">This Trip</button>
+          </div>
+          <div id="categoryChart" class="category-chart">
+            <div class="empty-state"><span class="empty-icon">📊</span><p>No data yet.</p></div>
+          </div>
+          <div class="chart-totals" id="chartTotals"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-label">Trip Total</div>
+          <h2 id="chartTripName">—</h2>
+          <div class="summary-bar" style="margin-top:0;border:none;padding:0.5rem 0">
+            <div class="summary-item">
+              <span class="summary-num" id="allTransactions">0</span>
+              <span class="summary-label">purchases</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+              <span class="summary-num" id="allUsd">$0.00</span>
+              <span class="summary-label">USD total</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+              <span class="summary-num" id="allDays">0</span>
+              <span class="summary-label">days</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <footer>
+      <span>Traveller's Tally</span>
+      <span id="footerDate"></span>
+    </footer>
+
+  </div><!-- end #app -->
 
   <script src="app.js"></script>
 </body>
